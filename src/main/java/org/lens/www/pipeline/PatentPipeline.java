@@ -1,4 +1,4 @@
-package org.lens.www.dao;
+package org.lens.www.pipeline;
 
 import org.lens.www.entity.PatentEntity;
 import org.lens.www.utils.DBUtilLocal;
@@ -12,21 +12,21 @@ import java.util.List;
 /**
  * 模拟dao
  */
-public class PatentDao {
+public class PatentPipeline {
 
-    public PatentDao(){System.out.println("* 持久层已经就绪.");}
+    public PatentPipeline(){System.out.println("* 管道已经就绪.");}
     /**
      * 查询数据库，获取无摘要url
      */
-    public List<String> findNoAb(int start, int size){
+    public List<String> findNoAb(){
         List<String> idList = new ArrayList<String>();
-        String sql = "select lens_id from patent_lens_data_distinct where abstract is null limit ?,?";
+        String sql = "select lens_id from patent_lens_data_distinct " +
+                "where abstract is null or cites_by_parents is null or cites_parents is null or family_info is null " +
+                "limit 0,10";
         Connection con = DBUtilLocal.getConnection();
         PreparedStatement ps = null;
         try{
             ps = con.prepareStatement(sql);
-            ps.setInt(1, start);
-            ps.setInt(2, size);
             ResultSet rs = ps.executeQuery();
             while (rs.next()){
                 String url = rs.getString("lens_id");
@@ -41,16 +41,22 @@ public class PatentDao {
     /**
      * 信息入库
      */
-    public void save_data(PatentEntity patentEntity){
+    public void save_data(PatentEntity patentEntity, String lens_id){
         Connection con = DBUtilLocal.getConnection();
-        String sql = "update patent_lens_data_distinct set abstract=?, cites_works=?, cites_parents=?, family_info=?";
+        String sql = "update patent_lens_data_distinct set abstract=?, cites_by_parents=?, cites_parents=?, family_info=? where lens_id=?";
         PreparedStatement ps = null;
         try {
             ps = con.prepareStatement(sql);
             ps.setString(1, patentEntity.getAb());
+            if (patentEntity.getAb().equals("The Lens serves almost all the patents and scholarly " +
+                    "work in the world as a free, open and secure digital public good, with user " +
+                    "privacy a paramount focus.")){
+                ps.setString(2, "");
+            }
             ps.setString(2, patentEntity.getCites_by_parents());
             ps.setString(3, patentEntity.getCites_parents());
             ps.setString(4, patentEntity.getFamily_info());
+            ps.setString(5, lens_id);
             ps.execute();
         }catch (SQLException e){
             e.printStackTrace();

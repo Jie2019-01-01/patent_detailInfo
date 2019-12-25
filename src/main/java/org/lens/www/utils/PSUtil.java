@@ -18,28 +18,28 @@ public class PSUtil {
     public static String getInfo(String content, String[] policy){
         System.out.println("\t- 解析策略==》" + policy[0]);
         Element element = null;
-        String info = "";
+        String field = "";
         try {
             Document docs = Jsoup.parse(content);
             if(policy.length==2){
                 element = docs.select(policy[0]).get(0);
-                info = element.attr(policy[1]);
-                System.out.println("\t- 获取的属性名===》" + policy[1]);
+                field = element.attr(policy[1]);
             }else{
                 element = docs.select(policy[0]).get(0);
-                info = element.text();
+                field = element.text();
             }
         }catch (Exception e){
             System.out.println(e.getMessage());
             return null;
         }
-        return info;
+        System.out.println("\t\tField的值为：" + field);
+        return field;
     }
 
     /**
      * 获取Cite专利
      */
-    public static String getCite(String content, String cite_type){
+    public static String getCite(String content){
         String field = "";
         try {
             JSONObject jsonObject = JSONObject.parseObject(content);
@@ -47,11 +47,6 @@ public class PSUtil {
             if (jsonArray.size()>0){
                 for(int i=0; i<jsonArray.size()-1; i++){
                     field += jsonArray.getJSONObject(i).getString("publicationKey") + ",";
-//                if("incoming".equals(cite_type)){
-//                    field += jsonArray.getJSONObject(i).getString("publicationKey") + ",";
-//                }else if("outgoing".equals(cite_type)){
-//                    field += jsonArray.getJSONObject(i).getString("publicationKey") + ",";
-//                }
                 }
                 field += jsonArray.getJSONObject(jsonArray.size()-1).getString("publicationKey");
             }
