@@ -32,7 +32,6 @@ public class PSUtil {
             System.out.println(e.getMessage());
             return null;
         }
-        System.out.println("\t\tField的值为：" + field);
         return field;
     }
 
@@ -51,7 +50,7 @@ public class PSUtil {
                 field += jsonArray.getJSONObject(jsonArray.size()-1).getString("publicationKey");
             }
         }catch (Exception e){
-            System.out.println("获取cite_by_patents或cite_patents出错");
+            e.printStackTrace();
             return null;
         }
         return field;

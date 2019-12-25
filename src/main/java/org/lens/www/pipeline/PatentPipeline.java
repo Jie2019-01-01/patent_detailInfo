@@ -20,7 +20,7 @@ public class PatentPipeline {
      */
     public List<String> findNoAb(){
         List<String> idList = new ArrayList<String>();
-        String sql = "select lens_id from patent_lens_data_distinct " +
+        String sql = "select publication_number, lens_id from patent_lens_data_distinct " +
                 "where abstract is null or cites_by_parents is null or cites_parents is null or family_info is null " +
                 "limit 0,10";
         Connection con = DBUtilLocal.getConnection();
@@ -48,11 +48,6 @@ public class PatentPipeline {
         try {
             ps = con.prepareStatement(sql);
             ps.setString(1, patentEntity.getAb());
-            if (patentEntity.getAb().equals("The Lens serves almost all the patents and scholarly " +
-                    "work in the world as a free, open and secure digital public good, with user " +
-                    "privacy a paramount focus.")){
-                ps.setString(2, "");
-            }
             ps.setString(2, patentEntity.getCites_by_parents());
             ps.setString(3, patentEntity.getCites_parents());
             ps.setString(4, patentEntity.getFamily_info());
