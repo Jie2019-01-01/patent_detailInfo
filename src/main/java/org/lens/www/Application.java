@@ -8,6 +8,18 @@ import java.util.List;
 
 /**
  * 获取专利数据的abstract、cite works、cite parents、family info
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
  */
 public class Application {
 
